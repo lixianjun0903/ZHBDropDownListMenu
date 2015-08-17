@@ -12,8 +12,7 @@
 
 typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle) {
     ZHBDropDownListMenuSeparatorStyleNone,
-    ZHBDropDownListMenuSeparatorStyleSingleLine,
-    ZHBDropDownListMenuSeparatorStyleCustom
+    ZHBDropDownListMenuSeparatorStyleSingleLine
 };
 
 @protocol ZHBDropDownListMenuDelegate <NSObject>
@@ -43,6 +42,8 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle) {
 @property (nonatomic, weak) id<ZHBDropDownListMenuDelegate> delegate;
 /*! @brief  数据源 */
 @property (nonatomic, weak) id<ZHBDropDownListMenuDataSource> dataSource;
+/*! @brief  菜单背景图片 */
+@property (nonatomic, strong) UIImage *backgroundImage;
 /*! @brief  标题字体  */
 @property (nonatomic, strong) UIFont *titleFont;
 /*! @brief  列表字体  */
@@ -58,11 +59,17 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle) {
 /*! @brief  分隔符颜色 */
 @property (nonatomic, strong) UIColor *separatorColor;
 /*! @brief  菜单外部背景颜色 */
-@property (nonatomic, strong) UIColor *bgColor;
+@property (nonatomic, strong) UIColor *listOutBgColor;
+/*! @brief  边框颜色 */
+@property (nonatomic, strong) UIColor *boardColor;
+/*! @brief  边框颜色 */
+@property (nonatomic, assign) CGFloat boardWidth;
 /*! @brief  分隔符样式 */
 @property (nonatomic, assign) ZHBDropDownListMenuSeparatorStyle separatorStyle;
 
 - (void)reloadData;
+
+- (NSString *)currentTitleAtColumn:(NSUInteger)column;
 
 @end
 
