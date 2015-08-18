@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>8FD1259B-D788-4790-BD7E-BF7ADE3E7AAD</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ZHBDropDownListMenu</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>6B57A682F759BC168A36AD2A3CA9876065BB8B8B</key>
+		<string>https://github.com/NoPPT/ZHBDropDownListMenu.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ZHBDropDownListMenu.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>6B57A682F759BC168A36AD2A3CA9876065BB8B8B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/NoPPT/ZHBDropDownListMenu.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>6B57A682F759BC168A36AD2A3CA9876065BB8B8B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>6B57A682F759BC168A36AD2A3CA9876065BB8B8B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ZHBDropDownListMenu</string>
+		</dict>
+	</array>
+</dict>
+</plist>

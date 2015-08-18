@@ -8,12 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+/*!
+ *  @brief  一个提供列表数据选择功能的控件
+ */
 @interface ZHBDropDownView : UIView
 
 /*! @brief  当前值 */
 @property (nonatomic, copy, readonly) NSString *value;
 
-/*! @brief  数据 */
+/*! @brief  数据,数组应存储字符串格式的内容 */
 @property (nonatomic, strong) NSArray *stringDatas;
 
 @end

@@ -10,7 +10,10 @@
 
 #pragma mark - ZHBArrowView
 
-typedef NS_ENUM(NSUInteger, ZHBArrowViewDirection) {
+/*!
+ *  @brief  箭头方向
+ */
+typedef NS_ENUM(NSUInteger, ZHBArrowViewDirection){
     ZHBArrowViewDirectionUp,
     ZHBArrowViewDirectionRight,
     ZHBArrowViewDirectionDown,
@@ -24,29 +27,58 @@ typedef NS_ENUM(NSUInteger, ZHBArrowViewDirection) {
 
 /*! @brief  箭头方向 */
 @property (nonatomic, assign) ZHBArrowViewDirection direction;
+/*! @brief  箭头样式 */
+@property (nonatomic, assign) ZHBArrowViewStyle style;
 /*! @brief  显示颜色 */
 @property (nonatomic, strong) UIColor *color;
 
 @end
 
-static CGFloat const kDefaultArrowHeight = 10;
-static CGFloat const kDefaultArrowWidth = 15;
+static CGFloat const kDefaultArrowHeight = 6;
+static CGFloat const kDefaultArrowWidth = 14;
 
 @implementation ZHBArrowView
 
+- (instancetype)initWithFrame:(CGRect)frame {
+    if (self = [super initWithFrame:frame]) {
+        self.bounds = CGRectMake(0, 0, 20, 10);
+    }
+    return self;
+}
+
 - (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGFloat buttonMidY = CGRectGetMidY(rect);
-    CGFloat buttonMidX = CGRectGetMidX(rect);
+    CGFloat viewMidY = CGRectGetMidY(rect);
+    CGFloat viewMidX = CGRectGetMidX(rect);
     
-    CGFloat arrowMinY = buttonMidY - kDefaultArrowHeight / 2;
-    CGFloat arrowMinX = buttonMidX - kDefaultArrowWidth / 2;
-    CGFloat arrowMaxY = buttonMidY + kDefaultArrowHeight / 2;
-    CGFloat arrowMaxX = buttonMidX + kDefaultArrowWidth / 2;
-    
-    CGContextMoveToPoint(context, buttonMidX, arrowMinY);
-    CGContextAddLineToPoint(context, arrowMinX, arrowMaxY);
-    CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
+    CGFloat arrowMinY = viewMidY - kDefaultArrowHeight / 2;
+    CGFloat arrowMinX = viewMidX - kDefaultArrowWidth / 2;
+    CGFloat arrowMaxY = viewMidY + kDefaultArrowHeight / 2;
+    CGFloat arrowMaxX = viewMidX + kDefaultArrowWidth / 2;
+
+    switch (self.style) {
+        case ZHBArrowViewStyleLine: {
+            CGFloat arrowW = 0.2f;
+            CGContextMoveToPoint(context, arrowMinX, arrowMaxY);
+            CGContextAddLineToPoint(context, viewMidX, arrowMinY);
+            CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
+            CGContextAddLineToPoint(context, arrowMaxX - arrowW, arrowMaxY);
+            CGContextAddLineToPoint(context, viewMidX, arrowMinY + arrowW);
+            CGContextAddLineToPoint(context, arrowMinX + arrowW, arrowMaxY);
+            CGContextAddLineToPoint(context, arrowMinX, arrowMaxY);
+            CGContextClosePath(context);
+            break;
+        }
+        case ZHBArrowViewStyleSolid: {
+            CGContextMoveToPoint(context, viewMidX, arrowMinY);
+            CGContextAddLineToPoint(context, arrowMinX, arrowMaxY);
+            CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
+            break;
+        }
+        default:
+            break;
+    }
     if (self.color) {
         [self.color set];
     } else {
@@ -67,12 +99,17 @@ static CGFloat const kDefaultArrowWidth = 15;
     [self changeDirection];
 }
 
+- (void)setStyle:(ZHBArrowViewStyle)style {
+    _style = style;
+    [self setNeedsDisplay];
+}
+
 @end
 
 
 #pragma mark - ZHBColumnView
 /*!
- *  @brief  列表头View
+ *  @brief  ZHBDropDownListMenu的列控件
  */
 @interface ZHBColumnView : UIControl
 
@@ -105,9 +142,9 @@ static NSString * const kSelectedKeyPath = @"selected";
     [super layoutSubviews];
     CGFloat selfW = CGRectGetWidth(self.frame);
     CGFloat selfH = CGRectGetHeight(self.frame);
-    CGFloat titleW = selfW / 3 * 2;
+    CGFloat arrowW = CGRectGetWidth(self.arrowView.frame);
+    CGFloat titleW = selfW - arrowW - 5;
     self.titleLbl.frame = CGRectMake(0, 0, titleW, selfH);
-    CGFloat arrowW = selfW / 3;
     self.arrowView.frame = CGRectMake(titleW, 0, arrowW, selfH);
 }
 
@@ -144,6 +181,7 @@ static NSString * const kSelectedKeyPath = @"selected";
 }
 
 @end
+
 
 #pragma mark - ZHBDropDownListMenu
 
@@ -200,7 +238,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     
     self.bgImageView.frame = self.bounds;
     
-    //根据列数设置frame
+    //根据列数设置frame和分割符的frame
     CGFloat listMenuW = CGRectGetWidth(self.frame);
     CGFloat listMenuH = CGRectGetHeight(self.frame);
     CGFloat subViewW = listMenuW / self.columns;
@@ -212,7 +250,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
             subView.frame = CGRectMake(subViewX + tag * subViewW, 0, subViewW, listMenuH);
         }
         if ([subView isKindOfClass:[UIView class]] && subView.tag >= 100) {
-            subView.frame = CGRectMake(lineViewX + (subView.tag - 100 + 1) * subViewW - 3, listMenuH / 7 * 2, 1.5, listMenuH / 7 * 3);
+            subView.frame = CGRectMake(lineViewX + (subView.tag - 100 + 1) * subViewW, listMenuH / 7 * 2, 1.5, listMenuH / 7 * 3);
         }
     }
 }
@@ -237,22 +275,25 @@ static CGFloat const kDefaultBoardWidth = 2.f;
 #pragma mark - Public Methods
 
 - (void)reloadData {
+    //移除原有子view
     while (self.subviews.count) {
         [[self.subviews firstObject] removeFromSuperview];
     }
+    //添加背景view
     if (self.backgroundImage) {
         UIImageView *imageView = [[UIImageView alloc] init];
         imageView.image = self.backgroundImage;
         [self addSubview:imageView];
         self.bgImageView = imageView;
     }
-    
+    //添加列view和分隔符view
     for (NSUInteger index = 0; index < self.columns; index ++) {
         ZHBColumnView *columnView     = [[ZHBColumnView alloc] init];
         columnView.tag                = index;
         columnView.titleLbl.font      = self.titleFont;
         columnView.titleLbl.textColor = self.titleColor;
         columnView.arrowView.color    = self.arrowColor;
+        columnView.arrowView.style    = self.arrowStyle;
         ZHBIndexPath *indexPath       = [ZHBIndexPath indexPathForRow:0 inColumn:index];
         columnView.titleLbl.text      = [self.dataSource dropDownListMenu:self titleForRowAtIndexPath:indexPath];
         [self.currentIndexPathDict setObject:indexPath forKey:@(index)];
@@ -282,7 +323,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     if (self.listView) {
         [self.listView removeFromSuperview];
     }
-    
+    //获取最顶部的window,把弹出的菜单添加到window上,避免菜单被遮盖问题
     UIWindow *window = [[UIApplication sharedApplication].windows lastObject];
     UIView *contentView = [[UIView alloc] initWithFrame:window.bounds];
     //设置listView
@@ -301,6 +342,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     listView.showsHorizontalScrollIndicator = NO;
     listView.showsVerticalScrollIndicator = NO;
     
+    //转换相应坐标关系,并根据实际位置设置frame
     CGPoint point = CGPointMake(CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame));
     point = [window convertPoint:point fromView:self.superview];
     CGFloat listViewH = rows * rowHeight < defaultListViewHeight ? rows * rowHeight : defaultListViewHeight;
@@ -315,8 +357,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
         [listView setLayoutMargins:UIEdgeInsetsZero];
     }
     
-    
-    //设置外部view
+    //设置背景view
     UIView *tapView = [[UIView alloc] initWithFrame:window.bounds];
     tapView.backgroundColor = self.listOutBgColor;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeListMenu)];
@@ -339,11 +380,13 @@ static CGFloat const kDefaultBoardWidth = 2.f;
 #pragma mark - UITableView Delegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    cell.textLabel.textColor = self.subTitleSelectColor;
+    //保存当前的选中位置
     self.currentColumnView.titleLbl.text = cell.textLabel.text;
     ZHBIndexPath *currentIndexPath = [ZHBIndexPath indexPathForRow:indexPath.row inColumn:self.currentColumnView.tag];
     [self.currentIndexPathDict setObject:currentIndexPath forKey:@(self.currentColumnView.tag)];
+    
     [self closeListMenu];
+    
     if ([self.delegate respondsToSelector:@selector(dropDownListMenu:didSelectTitleAtIndexPath:)]) {
         ZHBIndexPath *listIndexPath = [ZHBIndexPath indexPathForRow:indexPath.row inColumn:self.currentColumnView.tag];
         [self.delegate dropDownListMenu:self didSelectTitleAtIndexPath:listIndexPath];
@@ -376,6 +419,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
         cell.textLabel.font = self.subTitleFont;
         cell.textLabel.textColor = self.subTitleColor;
     }
+    //判断是否已选中,设置颜色
     ZHBIndexPath *lastIndexPath = (ZHBIndexPath *)[self.currentIndexPathDict objectForKey:@(self.currentColumnView.tag)];
     ZHBIndexPath *listIndexPath = [ZHBIndexPath indexPathForRow:indexPath.row inColumn:self.currentColumnView.tag];
     if ([lastIndexPath isEqual:listIndexPath]) {
