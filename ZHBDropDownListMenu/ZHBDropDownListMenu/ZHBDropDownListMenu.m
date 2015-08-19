@@ -329,7 +329,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     //设置listView
     CGFloat defaultListViewHeight = 200.f;
     NSUInteger rows = [self.dataSource dropDownListMenu:self numberOfRowsInColumn:self.currentColumnView.tag];
-    CGFloat rowHeight = 40.f;
+    CGFloat rowHeight = self.rowHeight < 1 ? CGRectGetHeight(self.frame) : self.rowHeight;
     
     UITableView *listView = [[UITableView alloc] init];
     listView.layer.borderWidth = 2;

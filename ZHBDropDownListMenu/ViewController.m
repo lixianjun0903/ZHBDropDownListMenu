@@ -50,8 +50,8 @@
     [self.view addSubview:listMenu];
     self.listMenu = listMenu;
     
-    ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 200, 100, 40)];
-    ZHBDropDownView *view2 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 260, 100, 40)];
+    ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 200, 100, 45)];
+    ZHBDropDownView *view2 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 260, 100, 25)];
     view1.stringDatas = self.titles[0];
     view2.stringDatas = self.titles[1];
     [self.view addSubview:view1];

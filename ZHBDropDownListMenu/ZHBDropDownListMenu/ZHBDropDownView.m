@@ -56,6 +56,8 @@
         _listMenu = [[ZHBDropDownListMenu alloc] init];
         _listMenu.dataSource = self;
         _listMenu.listOutBgColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.1f];
+        _listMenu.rowHeight = 35;
+        _listMenu.arrowStyle = ZHBArrowViewStyleSolid;
     }
     return _listMenu;
 }
