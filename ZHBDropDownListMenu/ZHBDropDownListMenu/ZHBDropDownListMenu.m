@@ -215,6 +215,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
 
 @implementation ZHBDropDownListMenu
 
+#pragma mark - Life Cycle
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.boardWidth          = kDefaultBoardWidth;
@@ -230,8 +231,6 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     }
     return self;
 }
-
-#pragma mark - Life Cycle
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -269,7 +268,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     
     CGContextFillRect(context, rect);
     CGContextSetStrokeColorWithColor(context, self.boardColor.CGColor);
-    CGContextStrokeRectWithWidth(context, rect, 3);
+    CGContextStrokeRectWithWidth(context, rect, self.boardWidth);
 }
 
 #pragma mark - Public Methods
@@ -332,15 +331,15 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     CGFloat rowHeight = self.rowHeight < 1 ? CGRectGetHeight(self.frame) : self.rowHeight;
     
     UITableView *listView = [[UITableView alloc] init];
-    listView.layer.borderWidth = 2;
+    listView.layer.borderWidth = self.boardWidth;
     listView.layer.borderColor = self.boardColor.CGColor;
-    listView.backgroundColor = [UIColor whiteColor];
-    listView.delegate = self;
-    listView.dataSource = self;
-    listView.rowHeight = rowHeight;
-    listView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    listView.backgroundColor   = [UIColor whiteColor];
+    listView.delegate          = self;
+    listView.dataSource        = self;
+    listView.rowHeight         = rowHeight;
+    listView.tableFooterView   = [[UIView alloc] initWithFrame:CGRectZero];
     listView.showsHorizontalScrollIndicator = NO;
-    listView.showsVerticalScrollIndicator = NO;
+    listView.showsVerticalScrollIndicator   = NO;
     
     //转换相应坐标关系,并根据实际位置设置frame
     CGPoint point = CGPointMake(CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame));
@@ -356,6 +355,10 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     if ([listView respondsToSelector:@selector(setLayoutMargins:)]) {
         [listView setLayoutMargins:UIEdgeInsetsZero];
     }
+    
+    //移动到上次选中的选项
+    ZHBIndexPath *currentIndex = [self.currentIndexPathDict objectForKey:@(self.currentColumnView.tag)];
+    [listView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:currentIndex.row inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     
     //设置背景view
     UIView *tapView = [[UIView alloc] initWithFrame:window.bounds];
