@@ -59,32 +59,34 @@ static CGFloat const kDefaultArrowWidth = 14;
 
     switch (self.style) {
         case ZHBArrowViewStyleLine: {
-            CGFloat arrowW = 0.2f;
             CGContextMoveToPoint(context, arrowMinX, arrowMaxY);
             CGContextAddLineToPoint(context, viewMidX, arrowMinY);
             CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
-            CGContextAddLineToPoint(context, arrowMaxX - arrowW, arrowMaxY);
-            CGContextAddLineToPoint(context, viewMidX, arrowMinY + arrowW);
-            CGContextAddLineToPoint(context, arrowMinX + arrowW, arrowMaxY);
-            CGContextAddLineToPoint(context, arrowMinX, arrowMaxY);
-            CGContextClosePath(context);
+            CGContextSetLineWidth(context, 1.5f);
+            
+            if (self.color) {
+                [self.color setStroke];
+            } else {
+                [[UIColor blackColor] setStroke];
+            }
+            CGContextDrawPath(context, kCGPathStroke);
             break;
         }
         case ZHBArrowViewStyleSolid: {
             CGContextMoveToPoint(context, viewMidX, arrowMinY);
             CGContextAddLineToPoint(context, arrowMinX, arrowMaxY);
             CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
+            if (self.color) {
+                [self.color set];
+            } else {
+                [[UIColor blackColor] set];
+            }
+            CGContextDrawPath(context, kCGPathFillStroke);
             break;
         }
         default:
             break;
     }
-    if (self.color) {
-        [self.color set];
-    } else {
-        [[UIColor blackColor] set];
-    }
-    CGContextDrawPath(context, kCGPathFillStroke);
 }
 
 - (void)changeDirection {
