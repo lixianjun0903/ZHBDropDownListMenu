@@ -356,8 +356,8 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     
     [contentView addSubview:tapView];
     [contentView addSubview:listView];
-    [window addSubview:contentView];
-    self.listView = contentView;
+    [window addSubview:listView];
+    self.listView = listView;
 }
 
 /*!
