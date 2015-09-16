@@ -260,6 +260,11 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     CGContextStrokeRectWithWidth(context, rect, self.boardWidth);
 }
 
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    [super willMoveToSuperview:newSuperview];
+    [self reloadData];
+}
+
 #pragma mark - Public Methods
 
 - (void)reloadData {
@@ -450,13 +455,6 @@ static CGFloat const kDefaultBoardWidth = 2.f;
         _currentIndexPathDict = [[NSMutableDictionary alloc] init];
     }
     return _currentIndexPathDict;
-}
-
-#pragma mark Setters
-
-- (void)setDataSource:(id<ZHBDropDownListMenuDataSource>)dataSource {
-    _dataSource = dataSource;
-    [self reloadData];
 }
 
 @end
