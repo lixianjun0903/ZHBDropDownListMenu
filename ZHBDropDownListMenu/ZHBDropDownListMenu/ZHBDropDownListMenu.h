@@ -131,6 +131,10 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle){
 @property (nonatomic, assign) CGFloat boardWidth;
 /*! @brief  列表行高 */
 @property (nonatomic, assign) CGFloat rowHeight;
+/*! @brief  是否显示`√`号标识 */
+@property (nonatomic, assign) BOOL showAccessory;
+/*! @brief  `√`标识颜色 */
+@property (nonatomic, strong) UIColor *accessoryColor;
 /*! @brief  箭头样式 */
 @property (nonatomic, assign) ZHBArrowViewStyle arrowStyle;
 /*! @brief  分隔符样式 */

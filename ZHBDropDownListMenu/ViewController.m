@@ -46,6 +46,7 @@
     listMenu.arrowColor = [UIColor purpleColor];
     listMenu.separatorStyle = ZHBDropDownListMenuSeparatorStyleSingleLine;
     listMenu.separatorColor = [UIColor redColor];
+    listMenu.showAccessory = YES;
     [listMenu reloadData];
     [self.view addSubview:listMenu];
     self.listMenu = listMenu;

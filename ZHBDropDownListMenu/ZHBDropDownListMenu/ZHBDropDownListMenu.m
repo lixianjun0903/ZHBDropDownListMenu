@@ -184,6 +184,7 @@ static NSString * const kSelectedKeyPath = @"selected";
 #define DEFAULT_SEPARATOR_COLOR         [UIColor grayColor]
 #define DEFAULT_BG_COLOR                [UIColor clearColor]
 #define DEFAULT_BOARD_COLOR             [UIColor colorWithRed:0xE2/255.0f green:0xE2/255.0f blue:0xE2/255.0f alpha:1]
+#define DEFAULT_ACCESSORY_COLOR         [UIColor redColor]
 
 @interface ZHBDropDownListMenu ()<UITableViewDataSource, UITableViewDelegate>
 
@@ -218,6 +219,8 @@ static CGFloat const kDefaultBoardWidth = 2.f;
         self.subTitleSelectColor = DEFAULT_SUBTITLE_SELECT_COLOR;
         self.listOutBgColor      = DEFAULT_BG_COLOR;
         self.boardColor          = DEFAULT_BOARD_COLOR;
+        self.accessoryColor      = DEFAULT_ACCESSORY_COLOR;
+        self.showAccessory       = NO;
     }
     return self;
 }
@@ -318,7 +321,6 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     }
     //获取最顶部的window,把弹出的菜单添加到window上,避免菜单被遮盖问题
     UIWindow *window = [[UIApplication sharedApplication].windows lastObject];
-    UIView *contentView = [[UIView alloc] initWithFrame:window.bounds];
     //设置listView
     CGFloat defaultListViewHeight = 200.f;
     NSUInteger rows   = [self.dataSource dropDownListMenu:self numberOfRowsInColumn:self.currentColumnView.tag];
@@ -340,7 +342,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     CGFloat listViewH = rows * rowHeight < defaultListViewHeight ? rows * rowHeight : defaultListViewHeight;
     CGFloat listViewY = point.y + listViewH > CGRectGetHeight(window.frame) ? point.y - CGRectGetHeight(self.frame) - listViewH : point.y;
     
-    listView.frame = CGRectMake(point.x, listViewY, CGRectGetWidth(self.frame), listViewH);
+    listView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), listViewH);
     
     if ([listView respondsToSelector:@selector(setSeparatorInset:)]) {
         [listView setSeparatorInset:UIEdgeInsetsZero];
@@ -353,16 +355,17 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     ZHBIndexPath *currentIndex = [self.currentIndexPathDict objectForKey:@(self.currentColumnView.tag)];
     [listView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:currentIndex.row inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(point.x, listViewY, CGRectGetWidth(self.frame), CGRectGetHeight(window.frame) - listViewY)];
     //设置背景view
-    UIView *tapView = [[UIView alloc] initWithFrame:window.bounds];
+    UIView *tapView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(contentView.frame), CGRectGetHeight(contentView.frame))];
     tapView.backgroundColor = self.listOutBgColor;
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closeListMenu)];
     [tapView addGestureRecognizer:tapGesture];
     
     [contentView addSubview:tapView];
     [contentView addSubview:listView];
-    [window addSubview:listView];
-    self.listView = listView;
+    [window addSubview:contentView];
+    self.listView = contentView;
 }
 
 /*!
@@ -389,8 +392,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     }
 }
 
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([cell respondsToSelector:@selector(setSeparatorInset:)]) {
         [cell setSeparatorInset:UIEdgeInsetsZero];
     }
@@ -418,8 +420,15 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     //判断是否已选中,设置颜色
     ZHBIndexPath *lastIndexPath = (ZHBIndexPath *)[self.currentIndexPathDict objectForKey:@(self.currentColumnView.tag)];
     ZHBIndexPath *listIndexPath = [ZHBIndexPath indexPathForRow:indexPath.row inColumn:self.currentColumnView.tag];
-    cell.textLabel.textColor = [lastIndexPath isEqual:listIndexPath] ? self.subTitleSelectColor : self.subTitleColor;
-    cell.textLabel.text      = [self.dataSource dropDownListMenu:self titleForRowAtIndexPath:listIndexPath];
+    if ([lastIndexPath isEqual:listIndexPath]) {
+        cell.textLabel.textColor = self.subTitleSelectColor;
+        cell.accessoryType       = self.showAccessory ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        cell.tintColor           = self.accessoryColor;
+    } else {
+        cell.textLabel.textColor = self.subTitleColor;
+        cell.accessoryType       = UITableViewCellAccessoryNone;
+    }
+    cell.textLabel.text = [self.dataSource dropDownListMenu:self titleForRowAtIndexPath:listIndexPath];
     return cell;
 }
 
