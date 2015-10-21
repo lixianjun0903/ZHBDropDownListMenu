@@ -32,16 +32,19 @@ typedef NS_ENUM(NSUInteger, ZHBArrowViewDirection){
 /*! @brief  显示颜色 */
 @property (nonatomic, strong) UIColor *color;
 
+- (void)changeArrowDirection:(ZHBArrowViewDirection)direction animated:(BOOL)animated;
+
 @end
 
-static CGFloat const kDefaultArrowHeight = 6;
-static CGFloat const kDefaultArrowWidth = 14;
+static CGFloat const kDefaultArrowHeight = 4;
+static CGFloat const kDefaultArrowWidth = 10;
 
 @implementation ZHBArrowView
 
+#pragma mark - Life Cycle
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.bounds = CGRectMake(0, 0, 20, 10);
+        self.bounds = CGRectMake(0, 0, 15, 10);
     }
     return self;
 }
@@ -56,7 +59,7 @@ static CGFloat const kDefaultArrowWidth = 14;
     CGFloat arrowMinX = viewMidX - kDefaultArrowWidth / 2;
     CGFloat arrowMaxY = viewMidY + kDefaultArrowHeight / 2;
     CGFloat arrowMaxX = viewMidX + kDefaultArrowWidth / 2;
-
+    
     CGContextMoveToPoint(context, arrowMinX, arrowMaxY);
     CGContextAddLineToPoint(context, viewMidX, arrowMinY);
     CGContextAddLineToPoint(context, arrowMaxX, arrowMaxY);
@@ -77,18 +80,17 @@ static CGFloat const kDefaultArrowWidth = 14;
     }
 }
 
-- (void)changeDirection {
-    CGAffineTransform endAngle = CGAffineTransformMakeRotation(self.direction * 90 * (M_PI / 180.0f));
-    [UIView animateWithDuration:0.25f animations:^{
+#pragma mark - Public Methods
+- (void)changeArrowDirection:(ZHBArrowViewDirection)direction animated:(BOOL)animated {
+    self.direction = direction;
+    NSTimeInterval duration = animated ? 0.25f : 0.f;
+    CGAffineTransform endAngle = CGAffineTransformMakeRotation(self.direction * M_PI_2);
+    [UIView animateWithDuration:duration animations:^{
         self.transform = endAngle;
     }];
 }
 
-- (void)setDirection:(ZHBArrowViewDirection)direction {
-    _direction = direction;
-    [self changeDirection];
-}
-
+#pragma mark - Setters
 - (void)setStyle:(ZHBArrowViewStyle)style {
     _style = style;
     [self setNeedsDisplay];
@@ -143,9 +145,9 @@ static NSString * const kSelectedKeyPath = @"selected";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:kSelectedKeyPath]) {
         if (self.selected) {
-            self.arrowView.direction = ZHBArrowViewDirectionDown;
+            [self.arrowView changeArrowDirection:ZHBArrowViewDirectionUp animated:YES];
         } else {
-            self.arrowView.direction = ZHBArrowViewDirectionUp;
+            [self.arrowView changeArrowDirection:ZHBArrowViewDirectionDown animated:YES];
         }
     }
 }
@@ -157,6 +159,7 @@ static NSString * const kSelectedKeyPath = @"selected";
         _arrowView = [[ZHBArrowView alloc] init];
         _arrowView.backgroundColor = [UIColor clearColor];
         _arrowView.userInteractionEnabled = NO;
+        [_arrowView changeArrowDirection:ZHBArrowViewDirectionDown animated:NO];
     }
     return _arrowView;
 }
