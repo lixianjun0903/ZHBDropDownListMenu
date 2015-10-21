@@ -19,4 +19,6 @@
 /*! @brief  数据,数组应存储字符串格式的内容 */
 @property (nonatomic, strong) NSArray *stringDatas;
 
+- (void)close;
+
 @end

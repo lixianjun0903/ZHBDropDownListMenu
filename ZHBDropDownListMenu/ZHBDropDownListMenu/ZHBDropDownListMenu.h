@@ -153,6 +153,14 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle){
  *  @return 置顶列的标题
  */
 - (NSString *)currentTitleAtColumn:(NSUInteger)column;
+/*!
+ *  @brief  移除list菜单
+ */
+- (void)closeListMenu;
+
++ (instancetype)listMenuWithFrame:(CGRect)frame toView:(UIView *)view;
+
+- (instancetype)initWithFrame:(CGRect)frame toView:(UIView *)view;
 
 @end
 

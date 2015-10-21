@@ -39,6 +39,11 @@
     self.listMenu.frame = self.bounds;
 }
 
+#pragma mark - Public Methods
+- (void)close {
+    [self.listMenu closeListMenu];
+}
+
 #pragma mark - ZHBDropDownListMenu DataSource
 - (NSUInteger)dropDownListMenu:(ZHBDropDownListMenu *)listMenu numberOfRowsInColumn:(NSUInteger)column {
     return self.stringDatas.count;
