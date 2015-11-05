@@ -1,12 +1,12 @@
 //
-//  ZHBDropDownView.m
+//  ZHBDropDownButton.m
 //  ZHBDropDownListMenu
 //
 //  Created by 庄彪 on 15/8/18.
 //  Copyright (c) 2015年 zhuang. All rights reserved.
 //
 
-#import "ZHBDropDownView.h"
+#import "ZHBDropDownButton.h"
 #import "ZHBDropdownMenu.h"
 
 @interface ZHBDropdownItem : NSObject<ZHBTableMenuItemProtocal>
@@ -28,21 +28,21 @@
 @end
 
 
-@interface ZHBDropDownView ()<ZHBDropdownMenuDataSource>
+@interface ZHBDropDownButton ()<ZHBDropdownMenuDataSource>
 
 @end
 
-@implementation ZHBDropDownView
+@implementation ZHBDropDownButton
 
 + (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title {
-    ZHBDropDownView *view = [[self alloc] initWithColumnNum:1 frame:frame];
+    ZHBDropDownButton *view = [[self alloc] initWithColumnNum:1 frame:frame];
     view.dataSource = view;
     view.defaultTitle = title;
     return view;
 }
 
 + (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title stringDatas:(NSArray *)datas {
-    ZHBDropDownView *view = [[self alloc] initWithColumnNum:1 frame:frame];
+    ZHBDropDownButton *view = [[self alloc] initWithColumnNum:1 frame:frame];
     view.dataSource = view;
     view.defaultTitle = title;
     view.stringDatas = datas;

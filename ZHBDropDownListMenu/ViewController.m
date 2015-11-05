@@ -8,10 +8,10 @@
 
 #import "ViewController.h"
 #import "ZHBDropdownMenu.h"
-#import "ZHBDropDownView.h"
+#import "ZHBDropDownButton.h"
 #import "ZHBTestDropDownCell.h"
 #import "ZHBModel.h"
-#import "ZHBDropDownListMenu/ZHBDropDownView.h"
+#import "ZHBDropDownListMenu/ZHBDropDownButton.h"
 
 @interface ViewController ()<ZHBDropdownMenuDataSource, ZHBTableMenuDelegate>
 
@@ -21,8 +21,8 @@
 @property (nonatomic, weak) ZHBDropdownMenu *listMenu1;
 /*! @brief  存储下拉菜单的数据 */
 @property (nonatomic, strong) NSArray *titles;
-/*! @brief  <#Description#> */
-@property (nonatomic, weak) ZHBDropDownView *dropView;
+
+@property (nonatomic, weak) ZHBDropDownButton *dropView;
 
 @end
 
@@ -34,6 +34,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.backgroundColor = [UIColor cyanColor];
     ZHBDropdownMenu *menu = [[ZHBDropdownMenu alloc] initWithColumnNum:3 frame:CGRectMake(10, 100, 300, 44)];
     menu.dataSource = self;
     menu.tableMenu.delegate = self;
@@ -50,12 +51,12 @@
     self.listMenu1 = menu1;
     
     NSArray *array = @[@"标题1", @"标题2", @"标题3", @"标题4", @"标题5"];
-    ZHBDropDownView *view = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 300, 100, 50) defaultTitle:@"123123"];
+    ZHBDropDownButton *view = [ZHBDropDownButton dropDownViewWithFrame:CGRectMake(60, 300, 100, 50) defaultTitle:@"123123"];
     view.stringDatas = array;
     [self.view addSubview:view];
     self.dropView = view;
     
-    ZHBDropDownView *view1 = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(120, 370, 100, 50) defaultTitle:nil stringDatas:array];
+    ZHBDropDownButton *view1 = [ZHBDropDownButton dropDownViewWithFrame:CGRectMake(120, 370, 100, 50) defaultTitle:nil stringDatas:array];
     [self.view addSubview:view1];
 }
 
