@@ -54,8 +54,12 @@
 }
 
 #pragma mark - Public Methods
-- (void)close {
-    [self closeListMenu];
+- (void)closeAllListMenu {
+    for (UIView *view in self.superview.subviews) {
+        if ([view isKindOfClass:[ZHBDropdownMenu class]]) {
+            [((ZHBDropdownMenu *)view) closeListMenu];
+        }
+    }
 }
 
 #pragma mark - ZHBDropdownMenu DataSource
@@ -69,7 +73,6 @@
     }
     return array;
 }
-
 
 #pragma mark - Getters and Setters
 

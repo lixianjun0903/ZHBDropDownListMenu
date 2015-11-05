@@ -21,10 +21,16 @@
 @property (nonatomic, weak) ZHBDropdownMenu *listMenu1;
 /*! @brief  存储下拉菜单的数据 */
 @property (nonatomic, strong) NSArray *titles;
+/*! @brief  <#Description#> */
+@property (nonatomic, weak) ZHBDropDownView *dropView;
 
 @end
 
 @implementation ViewController
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [self.dropView closeAllListMenu];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,8 +53,9 @@
     ZHBDropDownView *view = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 300, 100, 50) defaultTitle:@"123123"];
     view.stringDatas = array;
     [self.view addSubview:view];
+    self.dropView = view;
     
-    ZHBDropDownView *view1 = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 370, 100, 50) defaultTitle:nil stringDatas:array];
+    ZHBDropDownView *view1 = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(120, 370, 100, 50) defaultTitle:nil stringDatas:array];
     [self.view addSubview:view1];
 }
 

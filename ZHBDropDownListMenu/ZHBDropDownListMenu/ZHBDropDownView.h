@@ -25,6 +25,6 @@
 
 + (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title stringDatas:(NSArray *)datas;
 
-- (void)close;
+- (void)closeAllListMenu;
 
 @end
