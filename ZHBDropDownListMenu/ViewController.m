@@ -15,7 +15,8 @@
 
 /*! @brief  listMenu */
 @property (nonatomic, weak) ZHBDropDownListMenu *listMenu;
-
+/*! @brief  <#Description#> */
+@property (nonatomic, weak) ZHBDropDownView *view1;
 /*! @brief  存储下拉菜单的数据 */
 @property (nonatomic, strong) NSArray *titles;
 
@@ -36,23 +37,23 @@
     }
     self.titles = titles;
     
-    ZHBDropDownListMenu *listMenu = [[ZHBDropDownListMenu alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 40) toView:self.view];
+    ZHBDropDownListMenu *listMenu = [[ZHBDropDownListMenu alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 40)];
     listMenu.backgroundColor = [UIColor yellowColor];
     listMenu.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 40);
     listMenu.listOutBgColor = [UIColor colorWithRed:1.f green:0 blue:0 alpha:0.3];
-    listMenu.delegate = self;
-    listMenu.dataSource = self;
-    listMenu.titleColor = [UIColor blueColor];
-    listMenu.arrowColor = [UIColor purpleColor];
+    listMenu.delegate       = self;
+    listMenu.dataSource     = self;
+    listMenu.titleColor     = [UIColor blueColor];
+    listMenu.arrowColor     = [UIColor purpleColor];
     listMenu.separatorStyle = ZHBDropDownListMenuSeparatorStyleSingleLine;
     listMenu.separatorColor = [UIColor redColor];
-    listMenu.showAccessory = YES;
+    listMenu.showAccessory  = YES;
     [listMenu reloadData];
     [self.view addSubview:listMenu];
     self.listMenu = listMenu;
     
     ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 200, 100, 45)];
-    view1.tag = 10001;
+    self.view1 = view1;
     ZHBDropDownView *view2 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 260, 100, 25)];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeInfoDark];
     btn.frame = CGRectMake(200, 200, 50, 50);
@@ -70,8 +71,7 @@
 }
 
 - (void)clickBtn:(UIButton *)btn {
-    ZHBDropDownView *view1 = (ZHBDropDownView *)[self.view viewWithTag:10001];
-    [view1 close];
+    [self.view1 closeAllListMenu];
 }
 
 #pragma mark - ZHBDropDownListMenu DataSource

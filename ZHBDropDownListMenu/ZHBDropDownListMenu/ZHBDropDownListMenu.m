@@ -202,9 +202,6 @@ static NSString * const kSelectedKeyPath = @"selected";
 /*! @brief  背景 */
 @property (nonatomic, weak) UIImageView *bgImageView;
 
-/*! @brief  添加在哪个View上 */
-@property (nonatomic, weak) UIView *parentView;
-
 @end
 
 static NSUInteger const kDefaultColumnCount = 1;
@@ -265,16 +262,8 @@ static CGFloat const kDefaultBoardWidth = 2.f;
 
 #pragma mark - Public Methods
 
-- (instancetype)initWithFrame:(CGRect)frame toView:(UIView *)view {
-    if (self = [super initWithFrame:frame]) {
-        [self setupDefaultConfig];
-        self.parentView = view;
-    }
-    return self;
-}
-
-+ (instancetype)listMenuWithFrame:(CGRect)frame toView:(UIView *)view {
-    return [[self alloc] initWithFrame:frame toView:view];
++ (instancetype)listMenuWithFrame:(CGRect)frame {
+    return [[self alloc] initWithFrame:frame];
 }
 
 - (void)reloadData {
@@ -354,12 +343,9 @@ static CGFloat const kDefaultBoardWidth = 2.f;
      * 1、添加到当前view的父类view,当多个listmenu上下排列时,或者下面紧邻有其他控件时,会导致当前显示的list被其他控件遮盖。
      * 2、添加到最上层的window,解决了覆盖问题,但当当前控制器pop返回时,因为listmenu是加载window上的,和vc的view没有关联,会出现
      *    listmenu在屏幕最上层的bug。
-     * 3、改怎么解决呢？
+     * 3、改怎么解决呢？ZHBDropDownView原来写法为view里面包含子view：ZHBDropDownListMenu，计算位置的时候是根据父view的相对位置进行赋值，导致弹出的view：ZHBDropDownListMenu菜单比ZHBDropDownView低一级，所以会被其他的ZHBDropDownView遮盖。
      */
     //获取最顶部的window,把弹出的菜单添加到window上,避免菜单被遮盖问题,事实上，这种解决方案带来了另外一种bug，
-    if (nil == self.parentView) {
-        self.parentView = [[UIApplication sharedApplication].windows lastObject];
-    }
     //设置listView
     CGFloat defaultListViewHeight = 200.f;
     NSUInteger rows   = [self.dataSource dropDownListMenu:self numberOfRowsInColumn:self.currentColumnView.tag];
@@ -377,9 +363,9 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     listView.showsVerticalScrollIndicator   = NO;
 
     //转换相应坐标关系,并根据实际位置设置frame
-    CGPoint point = [self.parentView convertPoint:CGPointMake(CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame)) fromView:self.superview];
+    CGPoint point = [self.superview convertPoint:CGPointMake(CGRectGetMinX(self.frame), CGRectGetMaxY(self.frame)) fromView:self.superview];
     CGFloat listViewH = rows * rowHeight < defaultListViewHeight ? rows * rowHeight : defaultListViewHeight;
-    CGFloat listViewY = point.y + listViewH > CGRectGetHeight(self.parentView.frame) ? point.y - CGRectGetHeight(self.frame) - listViewH : point.y;
+    CGFloat listViewY = point.y + listViewH > CGRectGetHeight(self.window.frame) ? point.y - CGRectGetHeight(self.frame) - listViewH : point.y;
     
     listView.frame = CGRectMake(0, 0, CGRectGetWidth(self.frame), listViewH);
     
@@ -394,7 +380,7 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     ZHBIndexPath *currentIndex = [self.currentIndexPathDict objectForKey:@(self.currentColumnView.tag)];
     [listView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:currentIndex.row inSection:0] atScrollPosition:UITableViewScrollPositionMiddle animated:NO];
     
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(point.x, listViewY, CGRectGetWidth(self.frame), CGRectGetHeight(self.parentView.frame) - listViewY)];
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(point.x, listViewY, CGRectGetWidth(self.frame), CGRectGetHeight(self.superview.frame) - listViewY)];
     //设置背景view
     UIView *tapView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(contentView.frame), CGRectGetHeight(contentView.frame))];
     tapView.backgroundColor = self.listOutBgColor;
@@ -403,8 +389,8 @@ static CGFloat const kDefaultBoardWidth = 2.f;
     
     [contentView addSubview:tapView];
     [contentView addSubview:listView];
-    [self.parentView addSubview:contentView];
-    [self.parentView bringSubviewToFront:contentView];
+    [self.superview addSubview:contentView];
+    [self.superview bringSubviewToFront:contentView];
     self.listView = contentView;
 }
 

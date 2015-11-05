@@ -11,16 +11,15 @@
 
 @interface ZHBDropDownView ()<ZHBDropDownListMenuDataSource>
 
-/*! @brief  菜单 */
-@property (nonatomic, strong) ZHBDropDownListMenu *listMenu;
-
 @end
 
 @implementation ZHBDropDownView
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        [self addSubview:self.listMenu];
+        self.dataSource = self;
+        self.rowHeight = 35;
+        self.arrowStyle = ZHBArrowViewStyleSolid;
     }
     return self;
 }
@@ -34,14 +33,13 @@
     CGContextStrokeRectWithWidth(context, rect, 2);
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    self.listMenu.frame = self.bounds;
-}
-
 #pragma mark - Public Methods
-- (void)close {
-    [self.listMenu closeListMenu];
+- (void)closeAllListMenu {
+    for (UIView *view in self.superview.subviews) {
+        if ([view isKindOfClass:[ZHBDropDownListMenu class]]) {
+            [((ZHBDropDownListMenu *)view) closeListMenu];
+        }
+    }
 }
 
 #pragma mark - ZHBDropDownListMenu DataSource
@@ -56,25 +54,14 @@
 
 #pragma mark - Getters
 
-- (ZHBDropDownListMenu *)listMenu {
-    if (nil == _listMenu) {
-        _listMenu = [[ZHBDropDownListMenu alloc] init];
-        _listMenu.dataSource = self;
-        _listMenu.listOutBgColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.1f];
-        _listMenu.rowHeight = 35;
-        _listMenu.arrowStyle = ZHBArrowViewStyleSolid;
-    }
-    return _listMenu;
-}
-
 - (NSString *)value {
-    return [self.listMenu currentTitleAtColumn:0];
+    return [self currentTitleAtColumn:0];
 }
 
 #pragma mark - Setters
 - (void)setStringDatas:(NSArray *)array {
     _stringDatas = array;
-    [self.listMenu reloadData];
+    [self reloadData];
 }
 
 @end

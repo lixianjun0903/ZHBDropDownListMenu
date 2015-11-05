@@ -158,9 +158,9 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownListMenuSeparatorStyle){
  */
 - (void)closeListMenu;
 
-+ (instancetype)listMenuWithFrame:(CGRect)frame toView:(UIView *)view;
++ (instancetype)listMenuWithFrame:(CGRect)frame;
 
-- (instancetype)initWithFrame:(CGRect)frame toView:(UIView *)view;
+- (instancetype)initWithFrame:(CGRect)frame;
 
 @end
 
