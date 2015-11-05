@@ -7,15 +7,18 @@
 //
 
 #import "ViewController.h"
-#import "ZHBDropDownListMenu.h"
+#import "ZHBDropdownMenu.h"
 #import "ZHBDropDownView.h"
 #import "ZHBTestDropDownCell.h"
+#import "ZHBModel.h"
+#import "ZHBDropDownListMenu/ZHBDropDownView.h"
 
-@interface ViewController ()<ZHBDropDownListMenuDataSource, ZHBDropDownListMenuDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface ViewController ()<ZHBDropdownMenuDataSource, ZHBTableMenuDelegate>
 
 /*! @brief  listMenu */
-@property (nonatomic, weak) ZHBDropDownListMenu *listMenu;
-
+@property (nonatomic, weak) ZHBDropdownMenu *listMenu;
+/*! @brief  listMenu */
+@property (nonatomic, weak) ZHBDropdownMenu *listMenu1;
 /*! @brief  存储下拉菜单的数据 */
 @property (nonatomic, strong) NSArray *titles;
 
@@ -25,86 +28,79 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    ZHBDropdownMenu *menu = [[ZHBDropdownMenu alloc] initWithColumnNum:3 frame:CGRectMake(10, 100, 300, 44)];
+    menu.dataSource = self;
+    menu.tableMenu.delegate = self;
+    [self.view addSubview:menu];
+    self.listMenu = menu;
+    [self.listMenu setDefaultTitle:@"列1" forColumn:0];
+    [self.listMenu setDefaultTitle:@"列2" forColumn:1];
+    [self.listMenu setDefaultTitle:@"列3" forColumn:2];
     
-    NSMutableArray *titles = [NSMutableArray array];
-    for (NSInteger index = 0; index < 3; index ++) {
-        NSMutableArray *arr = [NSMutableArray array];
-        for (NSInteger number = 0; number < 3 + arc4random() % 50; number ++) {
-            [arr addObject:[NSString stringWithFormat:@"菜单数据%@", @(arc4random() % 10)]];
-        }
-        [titles addObject:arr];
-    }
-    self.titles = titles;
+    ZHBDropdownMenu *menu1 = [[ZHBDropdownMenu alloc] initWithColumnNum:3 frame:CGRectMake(50, 160, 300, 44)];
+    menu1.dataSource = self;
+    menu1.tableMenu.delegate = self;
+    [self.view addSubview:menu1];
+    self.listMenu1 = menu1;
     
-    ZHBDropDownListMenu *listMenu = [[ZHBDropDownListMenu alloc] initWithFrame:CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 40) toView:self.view];
-    listMenu.backgroundColor = [UIColor yellowColor];
-    listMenu.frame = CGRectMake(0, 100, CGRectGetWidth(self.view.frame), 40);
-    listMenu.listOutBgColor = [UIColor colorWithRed:1.f green:0 blue:0 alpha:0.3];
-    listMenu.delegate = self;
-    listMenu.dataSource = self;
-    listMenu.titleColor = [UIColor blueColor];
-    listMenu.arrowColor = [UIColor purpleColor];
-    listMenu.separatorStyle = ZHBDropDownListMenuSeparatorStyleSingleLine;
-    listMenu.separatorColor = [UIColor redColor];
-    listMenu.showAccessory = YES;
-    [listMenu reloadData];
-    [self.view addSubview:listMenu];
-    self.listMenu = listMenu;
+    NSArray *array = @[@"标题1", @"标题2", @"标题3", @"标题4", @"标题5"];
+    ZHBDropDownView *view = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 300, 100, 50)];
+    view.stringDatas = array;
+    [self.view addSubview:view];
     
-    ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 200, 100, 45)];
-    view1.tag = 10001;
-    ZHBDropDownView *view2 = [[ZHBDropDownView alloc] initWithFrame:CGRectMake(100, 260, 100, 25)];
-    UIButton *btn = [UIButton buttonWithType:UIButtonTypeInfoDark];
-    btn.frame = CGRectMake(200, 200, 50, 50);
-    [self.view addSubview:btn];
-    [btn addTarget:self action:@selector(clickBtn:) forControlEvents:UIControlEventTouchUpInside];
-    view1.stringDatas = self.titles[0];
-    view2.stringDatas = self.titles[1];
+    ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithColumnNum:1 frame:CGRectMake(60, 370, 100, 50)];
+    view1.stringDatas = array;
     [self.view addSubview:view1];
-    [self.view addSubview:view2];
-    
-    UITableView *tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 320, CGRectGetWidth(self.view.frame), CGRectGetHeight(self.view.frame) - 320)];
-    tableView.delegate = self;
-    tableView.dataSource = self;
-    [self.view addSubview:tableView];
 }
 
-- (void)clickBtn:(UIButton *)btn {
-    ZHBDropDownView *view1 = (ZHBDropDownView *)[self.view viewWithTag:10001];
-    [view1 close];
-}
-
-#pragma mark - ZHBDropDownListMenu DataSource
-- (NSString *)dropDownListMenu:(ZHBDropDownListMenu *)listMenu titleForRowAtIndexPath:(ZHBIndexPath *)indexPath {
-    NSArray *title = self.titles[indexPath.column];
-    return title[indexPath.row];
-}
-
-- (NSUInteger)dropDownListMenu:(ZHBDropDownListMenu *)listMenu numberOfRowsInColumn:(NSUInteger)column {
-    NSArray *title = self.titles[column];
-    return title.count;
-}
-
-- (NSUInteger)numberOfColumnsInDropDownListMenu:(ZHBDropDownListMenu *)listMenu {
-    return self.titles.count;
-}
-#pragma mark - ZHBDropDownListMenu Delegate
-- (void)dropDownListMenu:(ZHBDropDownListMenu *)listMenu didSelectTitleAtIndexPath:(ZHBIndexPath *)indexPath {
-    NSLog(@"%@---%@", @(indexPath.column), @(indexPath.row));
-}
-
-#pragma mark - UITableView DataSource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 20;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    ZHBTestDropDownCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
-    if (!cell) {
-        cell = [[ZHBTestDropDownCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-        cell.titles = self.titles[arc4random()%3];
+- (NSArray *)tableMenu:(ZHBTableMenu *)tableMenu itemsListMenuColumn:(NSInteger)index {
+    ZHBModel *model0 = [[ZHBModel alloc] init];
+    model0.name = @"所属专业";
+    model0.subChilds = @[@"所属专业0", @"所属专业1", @"所属专业2", @"所属专业3", @"所属专业4"];
+    ZHBModel *model1 = [[ZHBModel alloc] init];
+    model1.name = @"所属团队";
+    model1.subChilds = @[@"所属团队0", @"所属团队1", @"所属团队2", @"所属团队3", @"所属团队4", @"所属团队5", @"所属团队6"];
+    ZHBModel *model2 = [[ZHBModel alloc] init];
+    model2.name = @"@我的";
+    model2.subChilds = nil;
+    ZHBModel *model3 = [[ZHBModel alloc] init];
+    model3.name = @"我的待办";
+    model3.subChilds = nil;
+    if (0 == index) {
+        return @[model0, model1, model2, model3];
     }
-    return cell;
+    if (1 == index) {
+        return @[model0, model3, model2, model1];
+    }
+    if (2 == index) {
+        return @[model2, model3];
+    }
+    return @[model0, model1, model2, model3];
 }
+
+- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectMainRow:(NSInteger)mainRow {
+}
+
+- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectSubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow {
+    
+}
+
+//NSMutableArray *titles = [NSMutableArray array];
+//for (NSInteger index = 0; index < 3; index ++) {
+//    NSMutableArray *arr = [NSMutableArray array];
+//    for (NSInteger number = 0; number < 3 + arc4random() % 50; number ++) {
+//        [arr addObject:[NSString stringWithFormat:@"菜单数据%@", @(arc4random() % 10)]];
+//    }
+//    [titles addObject:arr];
+//}
+//self.titles = titles;
+
+//NSArray *array = @[@"所属专业", @"所属团队", @"@我的", @"我的待办"];
+//NSArray *array2 = @[@"所属专业0", @"所属专业1", @"所属专业2", @"所属专业3", @"所属专业4"];
+//NSArray *array3 = @[@"所属团队0", @"所属团队1", @"所属团队2", @"所属团队3", @"所属团队4", @"所属团队5", @"所属团队6"];
+//NSArray *ary4 = @[@"支撑工单", @"支撑工单1", @"支撑工单2", @"支撑工单3",];
+//NSArray *ary5 = @[@"未解决", @"已解决", @" 全部解决", ];
+//NSArray *ary6 = @[@"剩余1天", @"剩余3天", @"剩余6天", @"剩余7天以上"];
+
 
 @end
