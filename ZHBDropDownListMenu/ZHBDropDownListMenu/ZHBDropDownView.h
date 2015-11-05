@@ -17,10 +17,13 @@
 @property (nonatomic, copy, readonly) NSString *value;
 /*! @brief  数据,数组应存储字符串格式的内容 */
 @property (nonatomic, strong) NSArray *stringDatas;
+/*! @brief  <#Description#> */
+@property (nonatomic, copy) NSString *defaultTitle;
 
-+ (instancetype)dropDownViewWithFrame:(CGRect)frame;
 
-+ (instancetype)dropDownViewWithFrame:(CGRect)frame stringDatas:(NSArray *)datas;
++ (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title;
+
++ (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title stringDatas:(NSArray *)datas;
 
 - (void)close;
 

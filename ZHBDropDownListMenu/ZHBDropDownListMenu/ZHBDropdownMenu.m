@@ -94,7 +94,6 @@
         ColumnInfo *info = [ColumnInfo new];
         info.mainRow     = self.tableMenu.mainSelectRow;
         info.subRow      = self.tableMenu.subSelectRow;
-        NSLog(@"%ld %ld", info.mainRow, info.subRow);
         [self.selectColumns setObject:info forKey:@(self.currentColumnView.tag)];
         [self.tableMenu resetSelectData];
     }

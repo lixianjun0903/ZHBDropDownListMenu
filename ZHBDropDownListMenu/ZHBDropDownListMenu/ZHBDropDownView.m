@@ -34,17 +34,23 @@
 
 @implementation ZHBDropDownView
 
-+ (instancetype)dropDownViewWithFrame:(CGRect)frame {
++ (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title {
     ZHBDropDownView *view = [[self alloc] initWithColumnNum:1 frame:frame];
     view.dataSource = view;
+    view.defaultTitle = title;
     return view;
 }
 
-+ (instancetype)dropDownViewWithFrame:(CGRect)frame stringDatas:(NSArray *)datas {
++ (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title stringDatas:(NSArray *)datas {
     ZHBDropDownView *view = [[self alloc] initWithColumnNum:1 frame:frame];
     view.dataSource = view;
+    view.defaultTitle = title;
     view.stringDatas = datas;
     return view;
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    [self reloadData];
 }
 
 #pragma mark - Public Methods
@@ -65,11 +71,11 @@
 }
 
 
-#pragma mark - Getters
+#pragma mark - Getters and Setters
 
-- (void)setStringDatas:(NSArray *)stringDatas {
-    _stringDatas = stringDatas;
-    [self reloadData];
+- (void)setDefaultTitle:(NSString *)defaultTitle {
+    _defaultTitle = [defaultTitle copy];
+    [self setDefaultTitle:_defaultTitle forColumn:0];
 }
 
 - (NSString *)value {

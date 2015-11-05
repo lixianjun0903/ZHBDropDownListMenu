@@ -44,12 +44,11 @@
     self.listMenu1 = menu1;
     
     NSArray *array = @[@"标题1", @"标题2", @"标题3", @"标题4", @"标题5"];
-    ZHBDropDownView *view = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 300, 100, 50)];
+    ZHBDropDownView *view = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 300, 100, 50) defaultTitle:@"123123"];
     view.stringDatas = array;
     [self.view addSubview:view];
     
-    ZHBDropDownView *view1 = [[ZHBDropDownView alloc] initWithColumnNum:1 frame:CGRectMake(60, 370, 100, 50)];
-    view1.stringDatas = array;
+    ZHBDropDownView *view1 = [ZHBDropDownView dropDownViewWithFrame:CGRectMake(60, 370, 100, 50) defaultTitle:nil stringDatas:array];
     [self.view addSubview:view1];
 }
 
