@@ -115,7 +115,7 @@
 }
 
 - (void)showListMenu {
-    CGRect superRect = [self.window convertRect:self.bounds fromView:self];
+    CGRect superRect = [self.superview convertRect:self.bounds fromView:self];
     self.tableMenu.frame = CGRectMake(CGRectGetMinX(superRect), CGRectGetMaxY(superRect)-1, CGRectGetWidth(superRect), 220);
     self.tableMenu.items = [self.dataSource tableMenu:self.tableMenu itemsListMenuColumn:self.currentColumnView.tag];
     [self.superview addSubview:self.tableMenu];

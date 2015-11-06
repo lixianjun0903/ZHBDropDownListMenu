@@ -136,6 +136,7 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
             [self.subTableView reloadData];
         } else {
             self.subTableView.hidden = YES;
+            self.subSelectRow = -1;
             !self.needRemoveHandle ?: self.needRemoveHandle([item title]);
         }
         if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectMainRow:)]) {
@@ -143,11 +144,11 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
         }
     } else {
         self.subSelectRow = indexPath.row;
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        !self.needRemoveHandle ?: self.needRemoveHandle(cell.textLabel.text);
         if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectSubRow:ofMainRow:)]) {
-            UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
             NSInteger mainRow = [self currentSelectedMainRow];
             [self.delegate tableMenu:self didSelectSubRow:indexPath.row ofMainRow:mainRow];
-            !self.needRemoveHandle ?: self.needRemoveHandle( cell.textLabel.text);
         }
     }
 }
