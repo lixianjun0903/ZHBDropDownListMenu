@@ -7,9 +7,15 @@
 //
 
 #import "ZHBColumnView.h"
-#import "ZHBArrowView.h"
 
 static NSString * const kSelectedKeyPath = @"selected";
+
+@interface ZHBColumnView ()
+
+/*! @brief  <#Description#> */
+@property (nonatomic, strong) UIView *coverView;
+
+@end
 
 @implementation ZHBColumnView
 
@@ -29,12 +35,32 @@ static NSString * const kSelectedKeyPath = @"selected";
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+//    CGFloat selfW = CGRectGetWidth(self.frame);
+//    CGFloat selfH = CGRectGetHeight(self.frame);
+//    CGFloat arrowW = CGRectGetWidth(self.arrowView.frame);
+//    CGFloat titleW = selfW - arrowW - 5;
+//    self.titleLbl.frame = CGRectMake(0, 0, titleW, selfH);
+//    self.arrowView.frame = CGRectMake(titleW, 0, arrowW, selfH);
+    
     CGFloat selfW = CGRectGetWidth(self.frame);
     CGFloat selfH = CGRectGetHeight(self.frame);
     CGFloat arrowW = CGRectGetWidth(self.arrowView.frame);
-    CGFloat titleW = selfW - arrowW - 5;
-    self.titleLbl.frame = CGRectMake(0, 0, titleW, selfH);
-    self.arrowView.frame = CGRectMake(titleW, 0, arrowW, selfH);
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    dict[NSFontAttributeName] = self.titleLbl.font;
+    CGSize titleSize = [self.titleLbl.text boundingRectWithSize:CGSizeMake(selfW-arrowW, selfH) options:NSStringDrawingUsesLineFragmentOrigin attributes:dict context:nil].size;
+    self.titleLbl.frame = CGRectMake(selfW/2-titleSize.width/2-arrowW/2, 0, titleSize.width, selfH);
+    self.arrowView.frame = CGRectMake(CGRectGetMaxX(self.titleLbl.frame), 0, arrowW, selfH);
+}
+
+
+- (void)setEnable:(BOOL)enable {
+    self.userInteractionEnabled = enable;
+    if (enable) {
+        [self.coverView removeFromSuperview];
+    } else {
+        [self addSubview:self.coverView];
+        [self bringSubviewToFront:self.coverView];
+    }
 }
 
 #pragma mark - Event Response
@@ -66,8 +92,20 @@ static NSString * const kSelectedKeyPath = @"selected";
         _titleLbl = [[UILabel alloc] init];
         _titleLbl.backgroundColor = [UIColor clearColor];
         _titleLbl.textAlignment = NSTextAlignmentCenter;
+        _titleLbl.textColor = [UIColor blackColor];
+        _titleLbl.font = [UIFont systemFontOfSize:14.f];
     }
     return _titleLbl;
+}
+
+- (UIView *)coverView {
+    if (nil == _coverView) {
+        _coverView = [[UIView alloc] initWithFrame:self.bounds];
+//        _coverView.dynamic = NO;
+        _coverView.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.7];
+//        _coverView.blurRadius = 80;
+    }
+    return _coverView;
 }
 
 @end

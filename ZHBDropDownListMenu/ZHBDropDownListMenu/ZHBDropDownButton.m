@@ -28,7 +28,7 @@
 @end
 
 
-@interface ZHBDropDownButton ()<ZHBDropdownMenuDataSource>
+@interface ZHBDropDownButton ()<ZHBDropdownMenuDelegate>
 
 @end
 
@@ -36,16 +36,18 @@
 
 + (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title {
     ZHBDropDownButton *view = [[self alloc] initWithColumnNum:1 frame:frame];
-    view.dataSource = view;
+    view.delegate = view;
     view.defaultTitle = title;
+    [view setSuperView:view.superview.superview];
     return view;
 }
 
 + (instancetype)dropDownViewWithFrame:(CGRect)frame defaultTitle:(NSString *)title stringDatas:(NSArray *)datas {
     ZHBDropDownButton *view = [[self alloc] initWithColumnNum:1 frame:frame];
-    view.dataSource = view;
+    view.delegate = view;
     view.defaultTitle = title;
     view.stringDatas = datas;
+    [view setSuperView:view.superview.superview];
     return view;
 }
 
@@ -64,7 +66,7 @@
 
 #pragma mark - ZHBDropdownMenu DataSource
 
-- (NSArray *)tableMenu:(ZHBTableMenu *)tableMenu itemsListMenuColumn:(NSInteger)index {
+- (NSArray *)dropdownMenu:(ZHBDropdownMenu *)dropdownMenu itemsListMenuForColumn:(NSInteger)index {
     NSMutableArray *array = [NSMutableArray array];
     for (NSString *str in self.stringDatas) {
         ZHBDropdownItem *item = [[ZHBDropdownItem alloc] init];

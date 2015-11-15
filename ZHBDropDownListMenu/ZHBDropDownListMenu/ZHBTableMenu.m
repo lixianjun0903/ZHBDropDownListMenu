@@ -8,6 +8,8 @@
 
 #import "ZHBTableMenu.h"
 
+#define FONT_SIZE_15 [UIFont systemFontOfSize:15];
+
 @interface ZHBTableMenu ()<UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, strong) UITableView *mainTableView;
@@ -28,10 +30,11 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
     if (self = [super initWithFrame:frame]) {
         [self addSubview:self.mainTableView];
         [self addSubview:self.subTableView];
-        self.layer.borderWidth = 1.f;
-        self.layer.borderColor = [UIColor blackColor].CGColor;
+        self.layer.borderWidth = 2.f;
+        self.layer.borderColor = [UIColor lightGrayColor].CGColor;
         self.backgroundColor = [UIColor whiteColor];
-        [self resetSelectData];
+        self.mainSelectRow = -1;
+        self.subSelectRow = -1;
     }
     return self;
 }
@@ -52,11 +55,6 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
 
 #pragma mark - Public Methods
 
-- (void)resetSelectData {
-    self.mainSelectRow = -1;
-    self.subSelectRow = -1;
-}
-
 - (void)reloadData {
     self.subTableView.hidden = YES;
     [self.mainTableView reloadData];
@@ -67,6 +65,8 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
     if (mainRow < 0) return;
     [self.mainTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:mainRow inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
     self.mainSelectRow = mainRow;
+    id<ZHBTableMenuItemProtocal> item = self.items[self.mainSelectRow];
+    if ([item subtitles].count <= 0) return;
     self.subTableView.hidden = NO;
     [self.subTableView reloadData];
 }
@@ -76,10 +76,6 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
     self.subTableView.hidden = NO;
     self.subSelectRow = subRow;
     [self.subTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:subRow inSection:0] animated:NO scrollPosition:UITableViewScrollPositionNone];
-}
-
-- (NSInteger)currentSelectedMainRow {
-    return [self.mainTableView indexPathForSelectedRow].row;
 }
 
 #pragma mark - Delegate
@@ -92,8 +88,8 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
     if (tableView == self.mainTableView) {
         return self.items.count;
     } else {
-        NSInteger mainRow = [self currentSelectedMainRow];
-        id<ZHBTableMenuItemProtocal> item = self.items[mainRow];
+        if (self.mainSelectRow < 0) return 0;
+        id<ZHBTableMenuItemProtocal> item = self.items[self.mainSelectRow];
         return [item subtitles].count;
     }
 }
@@ -103,6 +99,7 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kMainCellReuseIdentifier];
         id<ZHBTableMenuItemProtocal> item = self.items[indexPath.row];
         cell.textLabel.text = [item title];
+        cell.textLabel.font = FONT_SIZE_15;
         if ([item subtitles].count > 0) {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         } else {
@@ -115,8 +112,8 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
         return cell;
     } else {
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSubCellReuseIdentifier];
-        NSInteger mainRow = [self currentSelectedMainRow];
-        id<ZHBTableMenuItemProtocal> item = self.items[mainRow];
+        id<ZHBTableMenuItemProtocal> item = self.items[self.mainSelectRow];
+        cell.textLabel.font = FONT_SIZE_15;
         if (indexPath.row == self.subSelectRow) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
@@ -130,25 +127,24 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == self.mainTableView) {
         self.mainSelectRow = indexPath.row;
+        self.subSelectRow = -1;
         id<ZHBTableMenuItemProtocal> item = self.items[indexPath.row];
+        BOOL haveSubTable;
         if ([item subtitles].count > 0) {
-            self.subTableView.hidden = NO;
+            haveSubTable = YES;
             [self.subTableView reloadData];
         } else {
-            self.subTableView.hidden = YES;
-            self.subSelectRow = -1;
-            !self.needRemoveHandle ?: self.needRemoveHandle([item title]);
+            haveSubTable = NO;
         }
-        if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectMainRow:)]) {
-            [self.delegate tableMenu:self didSelectMainRow:indexPath.row];
+        self.subTableView.hidden = !haveSubTable;
+        if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectTitle:AtMainRow:haveSubTable:)]) {
+            [self.delegate tableMenu:self didSelectTitle:[item title] AtMainRow:indexPath.row haveSubTable:haveSubTable];
         }
     } else {
         self.subSelectRow = indexPath.row;
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-        !self.needRemoveHandle ?: self.needRemoveHandle(cell.textLabel.text);
-        if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectSubRow:ofMainRow:)]) {
-            NSInteger mainRow = [self currentSelectedMainRow];
-            [self.delegate tableMenu:self didSelectSubRow:indexPath.row ofMainRow:mainRow];
+        if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectTitle:SubRow:ofMainRow:)]) {
+            [self.delegate tableMenu:self didSelectTitle:cell.textLabel.text SubRow:indexPath.row ofMainRow:self.mainSelectRow];
         }
     }
 }
@@ -195,8 +191,11 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
     if (nil == _mainTableView) {
         _mainTableView = [[UITableView alloc] init];
         _mainTableView.tableFooterView = [[UIView alloc] init];
-        _mainTableView.delegate = self;
-        _mainTableView.dataSource = self;
+        _mainTableView.backgroundColor = [UIColor whiteColor];
+        _mainTableView.delegate        = self;
+        _mainTableView.dataSource      = self;
+        _mainTableView.rowHeight       = 44;
+        _mainTableView.tintColor       = [UIColor redColor];
         [_mainTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kMainCellReuseIdentifier];
         [self setTableViewAbsoulteLine:_mainTableView];
     }
@@ -206,9 +205,12 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
 - (UITableView *)subTableView {
     if (nil == _subTableView) {
         _subTableView = [[UITableView alloc] init];
+        _subTableView.backgroundColor = [UIColor whiteColor];
         _subTableView.tableFooterView = [[UIView alloc] init];
         _subTableView.delegate        = self;
         _subTableView.dataSource      = self;
+        _subTableView.rowHeight       = 44;
+        _subTableView.tintColor       = [UIColor redColor];
         [_subTableView registerClass:[UITableViewCell class] forCellReuseIdentifier:kSubCellReuseIdentifier];
         [self setTableViewAbsoulteLine:_subTableView];
     }

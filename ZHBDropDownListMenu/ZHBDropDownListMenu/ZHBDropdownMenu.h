@@ -11,9 +11,13 @@
 
 @class ZHBDropdownMenu;
 
-@protocol ZHBDropdownMenuDataSource <NSObject>
+@protocol ZHBDropdownMenuDelegate <NSObject>
 
-- (NSArray *)tableMenu:(ZHBTableMenu *)tableMenu itemsListMenuColumn:(NSInteger)index;
+@required
+- (NSArray *)dropdownMenu:(ZHBDropdownMenu *)dropdownMenu itemsListMenuForColumn:(NSInteger)index;
+
+@optional
+- (void)dropdownMenu:(ZHBDropdownMenu *)dropdownMenu didSelectItemAtColumn:(NSInteger)column mainRow:(NSInteger)mainRow subRow:(NSInteger)subRow;
 
 @end
 
@@ -32,10 +36,12 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownMenuSeparatorStyle){
  */
 @interface ZHBDropdownMenu : UIView
 
-@property (nonatomic, weak) id<ZHBDropdownMenuDataSource> dataSource;
+@property (nonatomic, weak) id<ZHBDropdownMenuDelegate> delegate;
 @property (nonatomic, assign) ZHBDropDownMenuSeparatorStyle separatorStyle;
-/*! @brief  显示的菜单 */
-@property (nonatomic, strong) ZHBTableMenu *tableMenu;
+@property (nonatomic, assign, readonly) NSInteger currentIndex;
+@property (nonatomic, copy, readonly) NSString *currentTitle;
+
+- (void)setSuperView:(UIView *)superView;
 
 - (NSString *)currentTitleAtColumn:(NSUInteger)column;
 
@@ -43,9 +49,17 @@ typedef NS_ENUM(NSUInteger, ZHBDropDownMenuSeparatorStyle){
 
 - (void)setDefaultTitle:(NSString *)title forColumn:(NSUInteger)column;
 
+- (void)selectTitleAtColumn:(NSInteger)column mainRow:(NSInteger)mainRow subRow:(NSInteger)subRow;
+
+- (void)setEnableAtColumn:(NSInteger)column enable:(BOOL)enable;
+
+- (void)setAllColumnsEnable:(BOOL)enable;
+
 - (void)closeListMenu;
 
 - (void)reloadData;
+
+- (void)setCoverViewColor:(UIColor *)color;
 
 @end
 

@@ -27,8 +27,8 @@
 @protocol ZHBTableMenuDelegate <NSObject>
 
 @optional
-- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectMainRow:(NSInteger)mainRow;
-- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectSubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow;
+- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectTitle:(NSString *)title AtMainRow:(NSInteger)mainRow haveSubTable:(BOOL)haveSub;
+- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectTitle:(NSString *)title SubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow;
 
 @end
 
@@ -39,14 +39,9 @@
  */
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic, weak) id<ZHBTableMenuDelegate> delegate;
-/*! @brief  当选中主列表没有下级数据或者选中最后一级数据时的操作 */
-@property (nonatomic, copy) void (^needRemoveHandle)(NSString *title);
-@property (nonatomic, assign, readonly) NSInteger mainSelectRow;
-@property (nonatomic, assign, readonly) NSInteger subSelectRow;
 
 - (void)reloadData;
 - (void)selectMainTableRow:(NSInteger)mainRow;
 - (void)selectSubTableRow:(NSInteger)subRow;
-- (void)resetSelectData;
 
 @end

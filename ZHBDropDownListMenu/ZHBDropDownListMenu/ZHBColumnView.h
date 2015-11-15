@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class ZHBArrowView;
+#import "ZHBArrowView.h"
 
 /*!
  *  @brief  ZHBDropDownListMenu的列控件
@@ -18,5 +18,7 @@
 @property (nonatomic, strong) ZHBArrowView *arrowView;
 /*! @brief  标题 */
 @property (nonatomic, strong) UILabel *titleLbl;
+
+- (void)setEnable:(BOOL)enable;
 
 @end

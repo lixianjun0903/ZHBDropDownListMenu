@@ -13,7 +13,7 @@
 #import "ZHBModel.h"
 #import "ZHBDropDownListMenu/ZHBDropDownButton.h"
 
-@interface ViewController ()<ZHBDropdownMenuDataSource, ZHBTableMenuDelegate>
+@interface ViewController ()<ZHBDropdownMenuDelegate>
 
 /*! @brief  listMenu */
 @property (nonatomic, weak) ZHBDropdownMenu *listMenu;
@@ -36,8 +36,8 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor cyanColor];
     ZHBDropdownMenu *menu = [[ZHBDropdownMenu alloc] initWithColumnNum:3 frame:CGRectMake(10, 100, 300, 44)];
-    menu.dataSource = self;
-    menu.tableMenu.delegate = self;
+    menu.delegate = self;
+
     [self.view addSubview:menu];
     self.listMenu = menu;
     [self.listMenu setDefaultTitle:@"列1" forColumn:0];
@@ -45,8 +45,7 @@
     [self.listMenu setDefaultTitle:@"列3" forColumn:2];
     
     ZHBDropdownMenu *menu1 = [[ZHBDropdownMenu alloc] initWithColumnNum:3 frame:CGRectMake(50, 160, 300, 44)];
-    menu1.dataSource = self;
-    menu1.tableMenu.delegate = self;
+    menu1.delegate = self;
     [self.view addSubview:menu1];
     self.listMenu1 = menu1;
     
@@ -60,7 +59,7 @@
     [self.view addSubview:view1];
 }
 
-- (NSArray *)tableMenu:(ZHBTableMenu *)tableMenu itemsListMenuColumn:(NSInteger)index {
+- (NSArray *)dropdownMenu:(ZHBDropdownMenu *)dropdownMenu itemsListMenuForColumn:(NSInteger)index {
     ZHBModel *model0 = [[ZHBModel alloc] init];
     model0.name = @"所属专业";
     model0.subChilds = @[@"所属专业0", @"所属专业1", @"所属专业2", @"所属专业3", @"所属专业4"];
@@ -83,13 +82,6 @@
         return @[model2, model3];
     }
     return @[model0, model1, model2, model3];
-}
-
-- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectMainRow:(NSInteger)mainRow {
-}
-
-- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectSubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow {
-    
 }
 
 //NSMutableArray *titles = [NSMutableArray array];
