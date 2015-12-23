@@ -15,4 +15,7 @@
 
 @property (nonatomic, strong) NSArray *subChilds;
 
+/*! @brief  <#Description#> */
+@property (nonatomic, assign) BOOL check;
+
 @end

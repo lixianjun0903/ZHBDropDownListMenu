@@ -18,4 +18,12 @@
     return self.subChilds;
 }
 
+- (BOOL)selected {
+    return self.check;
+}
+
+- (void)setSelected:(BOOL)selected {
+    self.check = selected;
+}
+
 @end

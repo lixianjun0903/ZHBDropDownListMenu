@@ -13,7 +13,7 @@
 #import "ZHBModel.h"
 #import "ZHBDropDownListMenu/ZHBDropDownButton.h"
 
-@interface ViewController ()<ZHBDropdownMenuDelegate>
+@interface ViewController ()<ZHBTableMenuDelegate>
 
 /*! @brief  listMenu */
 @property (nonatomic, weak) ZHBDropdownMenu *listMenu;
@@ -28,9 +28,45 @@
 
 @implementation ViewController
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [self.dropView closeAllListMenu];
+/*
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    
+    ZHBTableMenu *tableMenu = [[ZHBTableMenu alloc] initWithFrame:CGRectMake(0, 100, 375, 400)];
+    tableMenu.delegate = self;
+    tableMenu.multiSelect = YES;
+    [self.view addSubview:tableMenu];
+    ZHBModel *model0 = [[ZHBModel alloc] init];
+    model0.name = @"所属专业";
+    
+    model0.subChilds = [self subArray];
+    ZHBModel *model1 = [[ZHBModel alloc] init];
+    model1.name = @"所属团队";
+    model1.subChilds = [self subArray];
+    ZHBModel *model2 = [[ZHBModel alloc] init];
+    model2.name = @"@我的";
+    model2.subChilds = [self subArray];
+    ZHBModel *model3 = [[ZHBModel alloc] init];
+    model3.name = @"我的待办";
+    model3.subChilds = [self subArray];
+    tableMenu.items =  @[model0, model1, model2, model3];
 }
+
+- (NSArray *)subArray {
+    NSMutableArray *array = [NSMutableArray array];
+    for (NSInteger index = 0; index < 10; index ++) {
+        ZHBModel *model0 = [[ZHBModel alloc] init];
+        model0.name = [NSString stringWithFormat:@"%@--%@", @"所属专业", @(index)];
+        [array addObject:model0];
+    }
+    return array;
+}
+
+- (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectTitle:(NSString *)title SubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow {
+    
+}
+ */
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -83,6 +119,7 @@
     }
     return @[model0, model1, model2, model3];
 }
+
 
 //NSMutableArray *titles = [NSMutableArray array];
 //for (NSInteger index = 0; index < 3; index ++) {

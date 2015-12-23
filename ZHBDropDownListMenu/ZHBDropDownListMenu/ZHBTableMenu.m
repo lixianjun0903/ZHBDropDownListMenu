@@ -114,12 +114,26 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kSubCellReuseIdentifier];
         id<ZHBTableMenuItemProtocal> item = self.items[self.mainSelectRow];
         cell.textLabel.font = FONT_SIZE_15;
-        if (indexPath.row == self.subSelectRow) {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+        id<ZHBTableMenuItemProtocal> subItem = [item subtitles][indexPath.row];
+        if (self.multiSelect) {
+            if ([subItem selected]) {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
         } else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
+            if (indexPath.row == self.subSelectRow) {
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            } else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+            }
         }
-        cell.textLabel.text = [item subtitles][indexPath.row];
+        if (self.multiSelect) {
+            
+            cell.textLabel.text = [subItem title];
+        } else {
+            cell.textLabel.text = [item subtitles][indexPath.row];
+        }
         return cell;
     }
 }
@@ -141,6 +155,12 @@ static NSString * const kSubCellReuseIdentifier = @"subcell";
             [self.delegate tableMenu:self didSelectTitle:[item title] AtMainRow:indexPath.row haveSubTable:haveSubTable];
         }
     } else {
+        id<ZHBTableMenuItemProtocal> item = self.items[self.mainSelectRow];
+        if (self.multiSelect) {
+            id<ZHBTableMenuItemProtocal> subItem = [item subtitles][indexPath.row];
+            [subItem setSelected:![subItem selected]];
+            [self.subTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
         self.subSelectRow = indexPath.row;
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         if ([self.delegate respondsToSelector:@selector(tableMenu:didSelectTitle:SubRow:ofMainRow:)]) {

@@ -17,6 +17,10 @@
 
 - (NSArray *)subtitles;
 
+- (BOOL)selected;
+
+- (void)setSelected:(BOOL)selected;
+
 @optional
 
 - (id)identifier;
@@ -30,6 +34,8 @@
 - (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectTitle:(NSString *)title AtMainRow:(NSInteger)mainRow haveSubTable:(BOOL)haveSub;
 - (void)tableMenu:(ZHBTableMenu *)tableMenu didSelectTitle:(NSString *)title SubRow:(NSInteger)subRow ofMainRow:(NSInteger)mainRow;
 
+
+
 @end
 
 @interface ZHBTableMenu : UIView
@@ -39,7 +45,8 @@
  */
 @property (nonatomic, strong) NSArray *items;
 @property (nonatomic, weak) id<ZHBTableMenuDelegate> delegate;
-
+/*! @brief  <#Description#> */
+@property (nonatomic, assign) BOOL multiSelect;
 - (void)reloadData;
 - (void)selectMainTableRow:(NSInteger)mainRow;
 - (void)selectSubTableRow:(NSInteger)subRow;
